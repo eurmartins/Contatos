@@ -1,34 +1,14 @@
 package com.example.Contacts.dto;
 
+import com.example.Contacts.entities.ContatoEntity;
 import com.example.Contacts.enums.TipoContato;
 
-public class ContatoDTO {
-
-    private TipoContato tipoContato;
-    private String contato;
-    private Long pessoaId;
-
-    public TipoContato getTipoContato() {
-        return tipoContato;
-    }
-
-    public void setTipoContato(TipoContato tipoContato) {
-        this.tipoContato = tipoContato;
-    }
-
-    public String getContato() {
-        return contato;
-    }
-
-    public void setContato(String contato) {
-        this.contato = contato;
-    }
-
-    public Long getPessoaId() {
-        return pessoaId;
-    }
-
-    public void setPessoaId(Long pessoaId) {
-        this.pessoaId = pessoaId;
+public record ContatoDTO(TipoContato tipoContato, String contato, Long pessoaId) {
+    public ContatoDTO(ContatoEntity contatoEntity) {
+        this(
+                contatoEntity.getTipoContato(),
+                contatoEntity.getContato(),
+                contatoEntity.getPessoa().getId()
+        );
     }
 }

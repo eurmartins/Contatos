@@ -2,7 +2,7 @@ package com.example.Contacts.dto;
 
 import com.example.Contacts.entities.PessoaEntity;
 
-public record PessoaDTO(Long id, String nome, String enderecoTotal) {
+public record PessoaDTO(Long id, String nome, String malaDireta) {
     public PessoaDTO(PessoaEntity pessoa) {
         this(
                 pessoa.getId(),
