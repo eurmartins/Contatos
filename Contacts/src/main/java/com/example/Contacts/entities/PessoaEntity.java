@@ -1,10 +1,12 @@
-package com.example.Contacts.infrastructure.Entities;
+package com.example.Contacts.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "pessoa")
-public class Pessoa {
+public class PessoaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +27,13 @@ public class Pessoa {
     @Column(nullable = true)
     private String uf;
 
-    public Pessoa(){
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContatoEntity> contatos;
+
+    public PessoaEntity(){
     }
 
-    public Pessoa(Long id, String nome, String endereco, String cep, String cidade, String uf){
+    public PessoaEntity(Long id, String nome, String endereco, String cep, String cidade, String uf) {
         this.id = id;
         this.nome = nome;
         this.endereco = endereco;
@@ -45,36 +50,36 @@ public class Pessoa {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getEndereco() {
         return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     public String getCep() {
         return cep;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
-
     public String getCidade() {
         return cidade;
     }
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
     public String getUf() {
         return uf;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
     }
 
     public void setUf(String uf) {
