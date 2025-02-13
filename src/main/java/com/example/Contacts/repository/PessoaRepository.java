@@ -9,4 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface PessoaRepository extends JpaRepository<PessoaEntity, Long> {
+    boolean existsByNome(String nome);
 }

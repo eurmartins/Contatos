@@ -2,6 +2,8 @@ package com.example.Contacts.services;
 
 import com.example.Contacts.dto.PessoaDTO;
 import com.example.Contacts.entities.PessoaEntity;
+import com.example.Contacts.exception.pessoaExceptions.PessoaAlreadyExistsException;
+import com.example.Contacts.exception.pessoaExceptions.PessoaNotFoundException;
 import com.example.Contacts.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,44 +20,44 @@ public class PessoaService {
     private PessoaRepository pessoaRepository;
 
     public PessoaEntity criarPessoa(PessoaEntity pessoa){
+        if (pessoaRepository.existsByNome(pessoa.getNome())) {
+            throw new PessoaAlreadyExistsException("Esse nome '" + pessoa.getNome() + "' já consta no sistema.");
+        }
         return pessoaRepository.save(pessoa);
     }
 
-    public ResponseEntity<PessoaEntity> procurarPorId(Long id) {
+    public PessoaEntity procurarPorId(Long id) {
         return pessoaRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new PessoaNotFoundException("O id " + id + " não consta no sistema"));
     }
 
-    public ResponseEntity<PessoaDTO> obterMalaDireta(Long id) {
-        return pessoaRepository.findById(id)
-                .map(pessoa -> new ResponseEntity<>(new PessoaDTO(pessoa), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public PessoaDTO obterMalaDireta(Long id) {
+        PessoaEntity pessoa = pessoaRepository.findById(id)
+                .orElseThrow(() -> new PessoaNotFoundException("O id " + id + " não consta no sistema"));
+        return new PessoaDTO(pessoa);
     }
 
     public List<PessoaEntity> listarPessoas(){
         return pessoaRepository.findAll();
     }
 
-    public ResponseEntity<PessoaEntity> atualizarPessoa(Long id, PessoaEntity pessoaAtt) {
-        return pessoaRepository.findById(id)
-                .map(pessoa -> {
-                    pessoa.setNome(pessoaAtt.getNome());
-                    pessoa.setEndereco(pessoaAtt.getEndereco());
-                    pessoa.setCep(pessoaAtt.getCep());
-                    pessoa.setCidade(pessoaAtt.getCidade());
-                    pessoa.setUf(pessoaAtt.getUf());
-                    PessoaEntity pessoaAtualizada = pessoaRepository.save(pessoa);
-                    return new ResponseEntity<>(pessoaAtualizada, HttpStatus.OK);
-                })
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public PessoaEntity atualizarPessoa(Long id, PessoaEntity pessoaAtt) {
+        PessoaEntity pessoa = pessoaRepository.findById(id)
+                .orElseThrow(() -> new PessoaNotFoundException("O id " + id + " não consta no sistema."));
+
+        pessoa.setNome(pessoaAtt.getNome());
+        pessoa.setEndereco(pessoaAtt.getEndereco());
+        pessoa.setCep(pessoaAtt.getCep());
+        pessoa.setCidade(pessoaAtt.getCidade());
+        pessoa.setUf(pessoaAtt.getUf());
+
+        return pessoaRepository.save(pessoa);
     }
 
-    public ResponseEntity<Void> excluirPessoa(Long id) {
+    public void excluirPessoa(Long id) {
         if (!pessoaRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new PessoaNotFoundException("O id " + id + " não consta no sistema.");
         }
         pessoaRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

@@ -3,6 +3,8 @@ package com.example.Contacts.controller;
 import com.example.Contacts.dto.PessoaDTO;
 import com.example.Contacts.entities.PessoaEntity;
 import com.example.Contacts.services.PessoaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,38 +19,41 @@ public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
 
+
     @PostMapping("/criar")
-    public ResponseEntity<PessoaEntity> adicionarPessoa(@RequestBody PessoaEntity pessoa){
+    public ResponseEntity<PessoaEntity> salvarPessoa(@RequestBody PessoaEntity pessoa){
         PessoaEntity novaPessoa = pessoaService.criarPessoa(pessoa);
-        return new ResponseEntity<>(novaPessoa, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
     }
 
     @GetMapping("/procurarPorId/{id}")
     public ResponseEntity<PessoaEntity> procurarPessoaPorId(@PathVariable Long id) {
-        return pessoaService.procurarPorId(id);
+        PessoaEntity pessoa = pessoaService.procurarPorId(id);
+        return ResponseEntity.ok(pessoa);
     }
 
-    @GetMapping("/malaDireta/{id}")//ok
+    @GetMapping("/malaDireta/{id}")
     public ResponseEntity<PessoaDTO> obterMalaDireta(@PathVariable Long id) {
-        return pessoaService.obterMalaDireta(id);
+        PessoaDTO pessoaDTO = pessoaService.obterMalaDireta(id);
+        return ResponseEntity.ok(pessoaDTO);
     }
 
-    @GetMapping("/listar")//ok
-    public ResponseEntity<List<PessoaEntity>>listarPessoas(){
+    @GetMapping("/listar")
+    public ResponseEntity<List<PessoaEntity>> listarPessoas(){
         List<PessoaEntity> people = pessoaService.listarPessoas();
-        return new ResponseEntity<>(people, HttpStatus.OK);
+        return ResponseEntity.ok(people);
     }
 
-    @PutMapping("/atualizar/{id}")//ok
+    @PutMapping("/atualizar/{id}")
     public ResponseEntity<PessoaEntity> atualizarPessoa(@PathVariable Long id, @RequestBody PessoaEntity pessoa) {
-        return pessoaService.atualizarPessoa(id, pessoa);
+        PessoaEntity pessoaAtualizada = pessoaService.atualizarPessoa(id, pessoa);
+        return ResponseEntity.ok(pessoaAtualizada);
     }
 
-    @DeleteMapping("/excluir/{id}") //ok
+    @DeleteMapping("/excluir/{id}")
     public ResponseEntity<Void> excluirPessoa(@PathVariable Long id) {
-        return pessoaService.excluirPessoa(id);
+        pessoaService.excluirPessoa(id);
+        return ResponseEntity.noContent().build();
     }
-
-
 
 }
