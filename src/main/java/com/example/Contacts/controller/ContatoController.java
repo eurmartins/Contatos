@@ -19,26 +19,30 @@ public class ContatoController {
     @PostMapping("/criar")
     public ResponseEntity<ContatoDTO> adicionarContato(@RequestBody ContatoDTO contatoDTO) {
         ContatoDTO novoContato = contatoService.criarContato(contatoDTO);
-        return new ResponseEntity<>(novoContato, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoContato);
     }
 
     @GetMapping("/obterContatoPorId/{id}")
     public ResponseEntity<ContatoEntity> obterContatoPorId(@PathVariable Long id) {
-        return contatoService.obterContatoPorId(id);
+        ContatoEntity contato = contatoService.obterContatoPorId(id);
+        return ResponseEntity.ok(contato);
     }
 
     @GetMapping("/pessoa/{pessoaId}")
     public ResponseEntity<List<ContatoDTO>> listarContatosPorPessoa(@PathVariable Long pessoaId) {
-        return contatoService.listarContatosPorPessoa(pessoaId);
+        List<ContatoDTO> contatos = contatoService.listarContatosPorPessoa(pessoaId);
+        return ResponseEntity.ok(contatos);
     }
 
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<ContatoDTO> atualizarContato(@PathVariable Long id, @RequestBody ContatoDTO contatoDTO) {
-        return contatoService.atualizarContato(id, contatoDTO);
+        ContatoDTO contatoAtualizado = contatoService.atualizarContato(id, contatoDTO);
+        return ResponseEntity.ok(contatoAtualizado);
     }
 
     @DeleteMapping("/excluir/{id}")
     public ResponseEntity<Void> excluirContato(@PathVariable Long id) {
-        return contatoService.deletarContato(id);
+        contatoService.deletarContato(id);
+        return ResponseEntity.noContent().build();
     }
 }

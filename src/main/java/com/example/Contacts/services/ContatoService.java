@@ -3,6 +3,7 @@ package com.example.Contacts.services;
 import com.example.Contacts.dto.ContatoDTO;
 import com.example.Contacts.entities.ContatoEntity;
 import com.example.Contacts.entities.PessoaEntity;
+import com.example.Contacts.exception.contatosExceptions.ContatoNotFoundException;
 import com.example.Contacts.repository.ContatoRepository;
 import com.example.Contacts.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,47 +23,44 @@ public class ContatoService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public ContatoDTO criarContato(ContatoDTO contatoDTO) {//ok
+    public ContatoDTO criarContato(ContatoDTO contatoDTO) {
         PessoaEntity pessoa = pessoaRepository.findById(contatoDTO.pessoaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Pessoa não encontrada com ID: " + contatoDTO.pessoaId()));
+                .orElseThrow(() -> new IllegalArgumentException("Pessoa não encontrada com ID: " + contatoDTO.pessoaId()));
         ContatoEntity contato = new ContatoEntity();
         contato.setTipoContato(contatoDTO.tipoContato());
         contato.setContato(contatoDTO.contato());
         contato.setPessoa(pessoa);
+
         ContatoEntity contatoSalvo = contatoRepository.save(contato);
         return new ContatoDTO(contatoSalvo);
     }
 
-    public ResponseEntity<ContatoEntity> obterContatoPorId(Long id) {//ok
+    public ContatoEntity obterContatoPorId(Long id) {
         return contatoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ContatoNotFoundException("Contato não encontrado com ID: " + id));
     }
 
-    public ResponseEntity<List<ContatoDTO>> listarContatosPorPessoa(Long pessoaId) {
-        List<ContatoDTO> contatos = contatoRepository.findByPessoaId(pessoaId)
+    public List<ContatoDTO> listarContatosPorPessoa(Long pessoaId) {
+        return contatoRepository.findByPessoaId(pessoaId)
                 .stream()
                 .map(ContatoDTO::new)
                 .toList();
-        return ResponseEntity.ok(contatos);
     }
 
-    public ResponseEntity<ContatoDTO> atualizarContato(Long id, ContatoDTO contatoDTO) {//ok
-        return contatoRepository.findById(id)
-                .map(contato -> {
-                    contato.setTipoContato(contatoDTO.tipoContato());
-                    contato.setContato(contatoDTO.contato());
-                    ContatoEntity contatoAtualizado = contatoRepository.save(contato);
-                    return new ResponseEntity<>(new ContatoDTO(contatoAtualizado), HttpStatus.OK);
-                })
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ContatoDTO atualizarContato(Long id, ContatoDTO contatoDTO) {
+        ContatoEntity contato = contatoRepository.findById(id)
+                .orElseThrow(() -> new ContatoNotFoundException("Contato não encontrado com ID: " + id));
+
+        contato.setTipoContato(contatoDTO.tipoContato());
+        contato.setContato(contatoDTO.contato());
+        ContatoEntity contatoAtualizado = contatoRepository.save(contato);
+        return new ContatoDTO(contatoAtualizado);
     }
 
-    public ResponseEntity<Void> deletarContato(Long id) {//ok
-        if (!pessoaRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        pessoaRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public void deletarContato(Long id) {
+       if(contatoRepository.existsById(id)){
+           throw new ContatoNotFoundException("Contato não encontrado com ID: " + id);
+       }
+        contatoRepository.deleteById(id);
     }
 }

@@ -32,6 +32,7 @@ public class ContatoEntity {
         this.pessoa = pessoa;
     }
 
+
     public Long getId() {
         return id;
     }
