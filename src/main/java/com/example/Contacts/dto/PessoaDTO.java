@@ -7,7 +7,11 @@ public record PessoaDTO(Long id, String nome, String malaDireta) {
         this(
                 pessoa.getId(),
                 pessoa.getNome(),
-                pessoa.getEndereco() + " - CEP: " + pessoa.getCep() + " - " + pessoa.getCidade() + "/" + pessoa.getUf()
+                String.format("%s - CEP: %s - %s/%s",
+                        pessoa.getEndereco(),
+                        pessoa.getCep(),
+                        pessoa.getCidade(),
+                        pessoa.getUf())
         );
     }
 }

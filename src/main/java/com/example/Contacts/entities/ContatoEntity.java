@@ -18,7 +18,7 @@ public class ContatoEntity {
     @Column(nullable = false)
     private String contato;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "pessoa_id", nullable = false)
     private PessoaEntity pessoa;
 

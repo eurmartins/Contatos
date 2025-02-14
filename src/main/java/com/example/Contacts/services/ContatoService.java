@@ -4,6 +4,8 @@ import com.example.Contacts.dto.ContatoDTO;
 import com.example.Contacts.entities.ContatoEntity;
 import com.example.Contacts.entities.PessoaEntity;
 import com.example.Contacts.exception.contatosExceptions.ContatoNotFoundException;
+import com.example.Contacts.exception.contatosExceptions.ContatoNotFoundToPessoaException;
+import com.example.Contacts.exception.contatosExceptions.PessoaNotFoundInContatoException;
 import com.example.Contacts.repository.ContatoRepository;
 import com.example.Contacts.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContatoService {
@@ -25,7 +28,7 @@ public class ContatoService {
 
     public ContatoDTO criarContato(ContatoDTO contatoDTO) {
         PessoaEntity pessoa = pessoaRepository.findById(contatoDTO.pessoaId())
-                .orElseThrow(() -> new IllegalArgumentException("Pessoa não encontrada com ID: " + contatoDTO.pessoaId()));
+                .orElseThrow(() -> new PessoaNotFoundInContatoException("Pessoa não encontrada com ID: " + contatoDTO.pessoaId()));
         ContatoEntity contato = new ContatoEntity();
         contato.setTipoContato(contatoDTO.tipoContato());
         contato.setContato(contatoDTO.contato());
@@ -41,11 +44,16 @@ public class ContatoService {
     }
 
     public List<ContatoDTO> listarContatosPorPessoa(Long pessoaId) {
-        return contatoRepository.findByPessoaId(pessoaId)
+        List<ContatoDTO> contatos = contatoRepository.findByPessoaId(pessoaId)
                 .stream()
                 .map(ContatoDTO::new)
                 .toList();
+        if (contatos.isEmpty()) {
+            throw new ContatoNotFoundToPessoaException("Nenhum contato encontrado para a pessoa com ID: " + pessoaId);
+        }
+        return contatos;
     }
+
 
     public ContatoDTO atualizarContato(Long id, ContatoDTO contatoDTO) {
         ContatoEntity contato = contatoRepository.findById(id)
@@ -58,9 +66,9 @@ public class ContatoService {
     }
 
     public void deletarContato(Long id) {
-       if(contatoRepository.existsById(id)){
-           throw new ContatoNotFoundException("Contato não encontrado com ID: " + id);
-       }
+        if (!contatoRepository.existsById(id)){
+            throw new ContatoNotFoundException("Contato não encontrado com ID: " + id);
+        }
         contatoRepository.deleteById(id);
     }
 }
