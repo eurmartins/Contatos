@@ -11,8 +11,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Título API")
-                        .description("Descrição API")
-                        .version("Versão API"));
+                        .title("Api de gerenciamento de Contatos e Pessoas")
+                        .description("Projeto em Java e Spring Boot.")
+                        .version("1.0.0"));
     }
 }
