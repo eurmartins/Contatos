@@ -1,9 +1,9 @@
 package com.example.Contacts.controller.exception;
 
-import com.example.Contacts.controller.exception.model.StandardError;
-import com.example.Contacts.exception.contatosExceptions.ContatoNotFoundException;
-import com.example.Contacts.exception.contatosExceptions.ContatoNotFoundToPessoaException;
-import com.example.Contacts.exception.contatosExceptions.PessoaNotFoundInContatoException;
+import com.example.Contacts.controller.exception.model.ErroPadrao;
+import com.example.Contacts.exception.contatosExceptions.ContatoNaoEncontradoException;
+import com.example.Contacts.exception.contatosExceptions.ContatoNaoEncontradoEmPessoaException;
+import com.example.Contacts.exception.contatosExceptions.PessoaNaoEncontradaEmContatoException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ContatoExceptionHandler {
 
-    @ExceptionHandler(ContatoNotFoundException.class)
-    public ResponseEntity<StandardError> handleContatoNotFound(ContatoNotFoundException ex, HttpServletRequest request) {
-        StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
+    @ExceptionHandler(ContatoNaoEncontradoException.class)
+    public ResponseEntity<ErroPadrao> handleContatoNaoEncontradoException(ContatoNaoEncontradoException ex, HttpServletRequest request) {
+        ErroPadrao err = new ErroPadrao(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 
-    @ExceptionHandler(PessoaNotFoundInContatoException.class)
-    public ResponseEntity<StandardError> handlePessoaNotFoundInContatoException(PessoaNotFoundInContatoException ex, HttpServletRequest request) {
-        StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
+    @ExceptionHandler(PessoaNaoEncontradaEmContatoException.class)
+    public ResponseEntity<ErroPadrao> handlePessoaNaoEncontradaEmContatoException(PessoaNaoEncontradaEmContatoException ex, HttpServletRequest request) {
+        ErroPadrao err = new ErroPadrao(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 
-    @ExceptionHandler(ContatoNotFoundToPessoaException.class)
-    public ResponseEntity<StandardError> handleContatoNotFoundToPessoaException(ContatoNotFoundToPessoaException ex, HttpServletRequest request) {
-        StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
+    @ExceptionHandler(ContatoNaoEncontradoEmPessoaException.class)
+    public ResponseEntity<ErroPadrao> handleContatoNaoEncontradoEmPessoaException(ContatoNaoEncontradoEmPessoaException ex, HttpServletRequest request) {
+        ErroPadrao err = new ErroPadrao(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }
