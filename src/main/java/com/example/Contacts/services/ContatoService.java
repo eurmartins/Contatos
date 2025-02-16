@@ -25,6 +25,7 @@ public class ContatoService {
     public ContatoDTO criarContato(ContatoDTO contatoDTO) {
         PessoaEntity pessoa = pessoaRepository.findById(contatoDTO.pessoaId())
                 .orElseThrow(() -> new PessoaNaoEncontradaEmContatoException("Pessoa não encontrada com ID: " + contatoDTO.pessoaId()));
+
         ContatoEntity contato = new ContatoEntity();
         contato.setTipoContato(contatoDTO.tipoContato());
         contato.setContato(contatoDTO.contato());

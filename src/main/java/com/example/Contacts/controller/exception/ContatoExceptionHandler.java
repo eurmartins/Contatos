@@ -30,4 +30,5 @@ public class ContatoExceptionHandler {
         ErroPadrao err = new ErroPadrao(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
+
 }
