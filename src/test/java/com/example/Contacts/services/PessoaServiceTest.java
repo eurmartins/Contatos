@@ -30,11 +30,12 @@ class PessoaServiceTest {
 
     @Test
     @DisplayName("Deve retornar uma Lista com uma Pessoa de tamanho 1.")
-    void deveRetornarUmaListaDePessoas() {
+    void deveRetornarUmaListaDePessoas() {//ok
         PessoaEntity pessoa = new PessoaEntity(1L, "Victor", "Rua Tal" , "23131321", "Sao Paulo","Sp" );
-        Mockito.when(pessoaRepository.findAll()).thenReturn(Collections.singletonList(new PessoaEntity()));
-        List<PessoaEntity> pessoas = pessoaService.listarPessoas();
-        Assertions.assertEquals(1, pessoas.size());
+        Mockito.when(pessoaRepository.findAll()).thenReturn(Collections.singletonList(pessoa));
+        List<PessoaEntity> resultadoEsperado = Collections.singletonList(pessoa);
+        var resultado = pessoaService.listarPessoas();
+        Assertions.assertEquals(resultadoEsperado, resultado);
     }
 
     @Test
@@ -98,7 +99,4 @@ class PessoaServiceTest {
         pessoaService.excluirPessoa(1L);
         Mockito.verify(pessoaRepository, Mockito.times(1)).deleteById(1L);
     }
-
-
-
 }
