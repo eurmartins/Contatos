@@ -6,7 +6,7 @@ Este projeto é uma API Rest desenvolvida em Java com Spring Boot para gerenciar
 
 ## Tecnologias Utilizadas
 
-- **Java** (21/23 JDK)
+- **Java** (21 JDK)
 - **Spring Boot** (Framework Java)
 - **JPA/Hibernate** (Persistência de Dados).
 - **Mockito**(Testes Unitários).
