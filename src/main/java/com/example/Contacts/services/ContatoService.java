@@ -38,6 +38,7 @@ public class ContatoService {
     public ContatoEntity obterContatoPorId(Long id) {
         return contatoRepository.findById(id)
                 .orElseThrow(() -> new ContatoNaoEncontradoException("Contato não encontrado com ID: " + id));
+
     }
 
     public List<ContatoDTO> listarContatosPorPessoa(Long pessoaId) {
